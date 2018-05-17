@@ -5,8 +5,146 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Multi_Clipboard"
         mc:Ignorable="d"
-        Height="300" Width="300">
-    <Grid>
+        Height="320" Width="400">
+   
+    
+    
+    <!-- STYLES -->
+    <Window.Resources>        
         
+        <!-- LABEL -->
+        <Style TargetType="Label">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
+        
+        <!-- CLEARING BUTTONS -->
+        <Style TargetType="Button" x:Key="ClearingButtons">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Width" Value="95"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="border" 
+                            BorderThickness="1"                             
+                            BorderBrush="DarkGray" 
+                            CornerRadius="3" 
+                            Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FFFFA200" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- HOTKEYS -->
+        <Style TargetType="ToggleButton">            
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontStyle" Value="Italic"/>
+            <Setter Property="Width" Value="50"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Name="border" 
+                            BorderThickness="1"                             
+                            BorderBrush="#FF666666" 
+                            CornerRadius="7" 
+                            Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="Gold" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <LinearGradientBrush  EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#FFDDDDDD" Offset="0.79"/>
+                                <GradientStop Color="#FF04FF04" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+                <Trigger Property="IsChecked" Value="False">
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <LinearGradientBrush  EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#FFDDDDDD" Offset="0.79"/>
+                                <GradientStop Color="#FFDDDDDD" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- COMBOBOXES -->
+        <Style TargetType="ComboBox">
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Width" Value="65"/>
+        </Style>
+
+
+    </Window.Resources> 
+    
+    
+    <!-- MAIN GRID -->
+    <Grid Background="#FF1B1B1C">        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.5*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="0.5*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.2*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="0.2*"/>
+        </Grid.ColumnDefinitions>
+
+
+
+        <Label Content="Clipboard count: " Grid.Column="1" Grid.Row="1"/>
+        <Label Content="Currently selected: " Grid.Column="1" Grid.Row="2"/>        
+        <Label Content="Previeus selector: " Grid.Column="1" Grid.Row="5"/>
+        <Label Content="Next selector: " Grid.Column="1" Grid.Row="6"/>
+
+        <Button x:Name="ClearCurrentSelection" Content="Clear current" Style="{StaticResource ClearingButtons}" Grid.Column="1" Grid.Row="4" />
+        <Button x:Name="ClearWholeClipboard" Content="Clear all" Style="{StaticResource ClearingButtons}" Grid.Column="2" Grid.Row="4" />
+
+        <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="5">
+            <ComboBox/>
+            <Label Content=" + "/>
+            <ToggleButton x:Name="PrevieusClipboardHotkey"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="6">
+            <ComboBox/>
+            <Label Content=" + "/>
+            <ToggleButton x:Name="NextClipboardHotkey"/>
+        </StackPanel>
+
     </Grid>
+ 
 </Window>
