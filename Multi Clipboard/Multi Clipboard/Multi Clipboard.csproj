@@ -77,6 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Enums.cs" />
     <Compile Include="MultiClipBoardView.xaml.cs">
       <DependentUpon>MultiClipBoardView.xaml</DependentUpon>
     </Compile>
