@@ -24,6 +24,23 @@
             OtherObject,
         }
 
+        public enum Action
+        {
+            Next,
+            Previeus,
+            Copy,
+            Cut,
+            None,
+        }
+
+        public enum KeyType
+        {
+            NextSpecial,
+            Next,
+            PrevieusSpecial,
+            Previeus,
+        }
+
 
 
     }

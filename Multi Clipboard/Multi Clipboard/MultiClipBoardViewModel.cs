@@ -112,6 +112,7 @@ namespace Multi_Clipboard
             set
             {
                 _SelectedprevieusHotkeySelector = value;
+                KeyCatcher.SetKey((int)value, Enums.KeyType.PrevieusSpecial);
                 NotifyOfPropertyChange("SelectedprevieusHotkeySelector");
             }
         }
@@ -128,6 +129,7 @@ namespace Multi_Clipboard
             set
             {
                 _SelectednextHotkeySelector = value;
+                KeyCatcher.SetKey((int)value, Enums.KeyType.NextSpecial);
                 NotifyOfPropertyChange("SelectednextHotkeySelector");
             }
         }
