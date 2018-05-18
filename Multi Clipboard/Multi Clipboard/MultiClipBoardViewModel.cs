@@ -9,16 +9,42 @@ using System.Collections.ObjectModel;
 namespace Multi_Clipboard
 {
 
+    public delegate void SetClipboardSize(int value);
+
     public class MultiClipBoardViewModel : Screen
     {
+
+        ClipboardCore core;
+        public static SetClipboardSize SetClipboardSize;
+
 
         public MultiClipBoardViewModel()
         {
             this.DisplayName = "Multi Clipboard";          // Window display name
-            FillComboboxes();                              // Setting up comboboxes
-
+            core = new ClipboardCore();
+            FillComboboxes();                              // Setting up comboboxes            
+            Clipboard.CurrentItem += SetCurrentlySelectedItem;            
+            
         }
 
+
+        private void SetCurrentlySelectedItem(object value)
+        {
+            currentlySelectedItem = value.ToString();
+        }
+
+        
+
+        private string _currentlySelectedItem;
+        public string currentlySelectedItem
+        {
+            get { return _currentlySelectedItem; }
+            private set
+            {
+                _currentlySelectedItem = value;
+                NotifyOfPropertyChange("currentlySelectedItem");
+            }
+        }
 
 
         /// <summary>
@@ -27,7 +53,7 @@ namespace Multi_Clipboard
         /// </summary>
         public void ClearCurrentSelection()
         {
-
+            ClipboardCore.HotkeyPressReaction(Enums.Action.Delete);
         }
 
         /// <summary>
@@ -36,7 +62,7 @@ namespace Multi_Clipboard
         /// </summary>
         public void ClearWholeClipboard()
         {
-
+            ClipboardCore.HotkeyPressReaction(Enums.Action.ClearAll);
         }
 
 
@@ -85,6 +111,7 @@ namespace Multi_Clipboard
             set
             {
                 _selectedclipboardSize = value;
+                SetClipboardSize(value);
                 NotifyOfPropertyChange("SelectedclipboardSize");
             }
         }

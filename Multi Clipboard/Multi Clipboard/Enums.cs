@@ -30,6 +30,8 @@
             Previeus,
             Copy,
             Cut,
+            ClearAll,
+            Delete,
             None,
         }
 

@@ -77,6 +77,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Clipboard.cs" />
+    <Compile Include="ClipboardCore.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="KeyCatcher.cs" />
     <Compile Include="MultiClipBoardView.xaml.cs">

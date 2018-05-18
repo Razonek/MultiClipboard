@@ -14,8 +14,8 @@ namespace Multi_Clipboard
 
         private static int _previeusSpecialKey { get; set; }
         private static int _nextSpecialKey { get; set; }
-        private static int _previeusKey { get; set; }
-        private static int _nextKey { get; set; }
+        public static int _previeusKey { get; set; }
+        public static int _nextKey { get; set; }
 
 
         [DllImport("user32.dll")]
