@@ -5,18 +5,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Windows;
 
 namespace Multi_Clipboard
 {
 
     public delegate void LoadedintoMemory(string value);
 
-     public class Clipboard
+    public class Clipboard
     {
-        
-        Queue<Item> clipboard;                                    // memory
+
+        private Queue<Item> clipboard;                                    // memory
         private int clipboardSize { get; set; }                     // maximum item count in memory
         private int currentlySelectedItemIndex = 0;                 // currently selected item index in queue
+        private Enums.Action userAction{get;set;}
 
         public static LoadedintoMemory CurrentItem;
 
@@ -59,6 +61,9 @@ namespace Multi_Clipboard
         }
 
 
+        /// <summary>
+        /// Copy item or multiple items and set it as one object. If file is cutting then make copy in environment directory
+        /// </summary>
         private void CopyItem()
         {
             StringCollection _item = new StringCollection();
@@ -71,12 +76,46 @@ namespace Multi_Clipboard
             }               
              
             else
-            {
-                var item = System.Windows.Clipboard.GetFileDropList();
-                foreach(string path in item)
+            {   
+                switch(userAction)
                 {
-                    _item.Add(path);
-                }
+                    case Enums.Action.Copy:
+                        foreach (string path in System.Windows.Clipboard.GetFileDropList())
+                        {
+                            _item.Add(path);
+                        }
+                        break;
+
+                    case Enums.Action.Cut:
+                        foreach (string path in System.Windows.Clipboard.GetFileDropList())
+                        {
+                            string name = Path.GetFileName(path);
+                            try
+                            {
+                                File.Copy(path, Environment.CurrentDirectory + name);                                
+                            }
+                            catch(IOException ex)
+                            {
+                                MessageBox.Show("File with the same name exist in App Folder");                                
+                            }         
+                            finally
+                            {
+                                _item.Add(Environment.CurrentDirectory + name);
+                            }  
+                            
+                            
+                            /* I dont know why I wrote it this way...
+                             * Simple way:
+                             * if(!File.Exist(path)
+                             * {
+                             *    File.Copy(path, Environment.CurrentDirectory + name);
+                             * }                            
+                             */                
+                            
+                        }
+                        break;
+                }             
+                
                 _isText = false;                
             }
 
@@ -86,8 +125,7 @@ namespace Multi_Clipboard
             currentlySelectedItem = clipboard.ElementAt(currentlySelectedItemIndex);
 
         }
-
-        
+              
 
 
 
@@ -97,7 +135,9 @@ namespace Multi_Clipboard
         /// <param name="action"> Kind of user action </param>
         private void UserAction(Enums.Action action)
         {
-            switch(action)
+            userAction = action;
+
+            switch (userAction)
             {              
 
                 case Enums.Action.Copy:  
