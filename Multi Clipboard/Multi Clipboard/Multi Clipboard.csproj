@@ -80,6 +80,7 @@
     <Compile Include="Clipboard.cs" />
     <Compile Include="ClipboardCore.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="Item.cs" />
     <Compile Include="KeyCatcher.cs" />
     <Compile Include="MultiClipBoardView.xaml.cs">
       <DependentUpon>MultiClipBoardView.xaml</DependentUpon>

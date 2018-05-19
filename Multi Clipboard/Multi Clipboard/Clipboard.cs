@@ -1,25 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Multi_Clipboard
 {
 
-    public delegate void LoadedintoMemory(object value);
+    public delegate void LoadedintoMemory(string value);
 
      public class Clipboard
     {
         
-        Queue<string> clipboard;                                    // memory
+        Queue<Item> clipboard;                                    // memory
         private int clipboardSize { get; set; }                     // maximum item count in memory
         private int currentlySelectedItemIndex = 0;                 // currently selected item index in queue
 
         public static LoadedintoMemory CurrentItem;
 
-        private string _currentlySelectedItem;                      // currently selected item to paste
-        public string currentlySelectedItem
+        private Item _currentlySelectedItem;                      // currently selected item to paste
+        public Item currentlySelectedItem
         {
             get { return _currentlySelectedItem; }
             private set
@@ -27,13 +29,23 @@ namespace Multi_Clipboard
                 _currentlySelectedItem = value;
                 if(value != null)
                 {
-                    System.Windows.Clipboard.SetText(value);
-                    CurrentItem(currentlySelectedItem);
+                    if (value.isText)
+                    {
+                        System.Windows.Clipboard.SetText(value.item[0]);
+                        CurrentItem(value.item[0]);
+                    }
+                                            
+                    else
+                    {
+                        System.Windows.Clipboard.SetFileDropList(value.item);
+                        string name = Path.GetFileName(value.item[0]);
+                        CurrentItem(name);
+                    }                 
+                    
                 }
                 
             }
         }
-
 
 
         /// <summary>
@@ -41,10 +53,42 @@ namespace Multi_Clipboard
         /// </summary>
         public Clipboard()
         {
-            clipboard = new Queue<string>();
+            clipboard = new Queue<Item>();
             ClipboardCore.HotkeyPressReaction += UserAction;
             MultiClipBoardViewModel.SetClipboardSize += SetClipboardMaxSize;
         }
+
+
+        private void CopyItem()
+        {
+            StringCollection _item = new StringCollection();
+            bool _isText;
+
+            if (System.Windows.Clipboard.ContainsText())
+            {
+                _item.Add(System.Windows.Clipboard.GetText());
+                _isText = true;                                
+            }               
+             
+            else
+            {
+                var item = System.Windows.Clipboard.GetFileDropList();
+                foreach(string path in item)
+                {
+                    _item.Add(path);
+                }
+                _isText = false;                
+            }
+
+            clipboard.Enqueue(new Item(_item, _isText));
+            QueueSizeControl();
+            currentlySelectedItemIndex = clipboard.Count - 1;
+            currentlySelectedItem = clipboard.ElementAt(currentlySelectedItemIndex);
+
+        }
+
+        
+
 
 
         /// <summary>
@@ -56,11 +100,8 @@ namespace Multi_Clipboard
             switch(action)
             {              
 
-                case Enums.Action.Copy:
-                    clipboard.Enqueue(System.Windows.Clipboard.GetText());
-                    QueueSizeControl();
-                    currentlySelectedItemIndex = clipboard.Count - 1;
-                    currentlySelectedItem = clipboard.ElementAt(currentlySelectedItemIndex);
+                case Enums.Action.Copy:  
+                    CopyItem();
                     break;
 
                 case Enums.Action.Next:
@@ -90,7 +131,7 @@ namespace Multi_Clipboard
                     break;
 
                 case Enums.Action.Delete:
-                    clipboard = new Queue<string>(clipboard.Where(x => x != currentlySelectedItem));
+                    clipboard = new Queue<Item>(clipboard.Where(x => x != currentlySelectedItem));
                     if (clipboard.Count > 0)
                         goto case Enums.Action.Previeus;
                     else
