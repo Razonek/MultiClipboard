@@ -22,6 +22,18 @@ namespace Multi_Clipboard
         public MultiClipBoardView()
         {
             InitializeComponent();
+            KeyDown += new KeyEventHandler(KeyPress);
         }
+
+        private void KeyPress(object sender, KeyEventArgs e)
+        {
+            int virtualKey = KeyInterop.VirtualKeyFromKey(e.Key);
+            string pressedKey = e.Key.ToString();
+            MultiClipBoardViewModel.CatchBindKey(pressedKey, virtualKey);
+        }
+
+
+
     }
+
 }

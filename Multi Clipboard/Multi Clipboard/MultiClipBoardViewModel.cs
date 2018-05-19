@@ -10,12 +10,84 @@ namespace Multi_Clipboard
 {
 
     public delegate void SetClipboardSize(int value);
+    public delegate void PressedKeyOnApplication(string keyName, int virtualKey);
 
     public class MultiClipBoardViewModel : Screen
     {
 
         ClipboardCore core;
+
         public static SetClipboardSize SetClipboardSize;
+        public static PressedKeyOnApplication CatchBindKey;
+
+        private bool _isAssignHotkeyAvailable { get; set; }
+        private Enums.KeyType _selectedKey { get; set; }
+
+        private bool _isCheckedPrevieusClipboardHotkey;
+        public bool isCheckedPrevieusClipboardHotkey
+        {
+            get { return _isCheckedPrevieusClipboardHotkey; }
+            set
+            {
+                _isCheckedPrevieusClipboardHotkey = value;
+                if(value && isCheckedNextClipboardHotkey)
+                {
+                    isCheckedNextClipboardHotkey = false;
+                }
+                if (value)
+                {
+                    _isAssignHotkeyAvailable = true;
+                    _selectedKey = Enums.KeyType.Previeus;
+                }
+                else _isAssignHotkeyAvailable = false;
+                NotifyOfPropertyChange("isCheckedPrevieusClipboardHotkey");
+            }
+        }
+
+        private bool _isCheckedNextClipboardHotkey;
+        public bool isCheckedNextClipboardHotkey
+        {
+            get { return _isCheckedNextClipboardHotkey; }
+            set
+            {
+                _isCheckedNextClipboardHotkey = value;
+                if(value && isCheckedPrevieusClipboardHotkey)
+                {
+                    isCheckedPrevieusClipboardHotkey = false;
+                }
+                if (value)
+                {
+                    _isAssignHotkeyAvailable = true;
+                    _selectedKey = Enums.KeyType.Next;
+                }
+                else _isAssignHotkeyAvailable = false;
+                NotifyOfPropertyChange("isCheckedNextClipboardHotkey");
+            }
+        }
+
+        private string _nextBindKeyName;
+        public string nextBindKeyName
+        {
+            get { return _nextBindKeyName; }
+            private set
+            {
+                _nextBindKeyName = value;
+                NotifyOfPropertyChange("nextBindKeyName");
+            }
+        }
+
+        private string _previeusBindKeyName;
+        public string previeusBindKeyName
+        {
+            get { return _previeusBindKeyName; }
+            private set
+            {
+                _previeusBindKeyName = value;
+                NotifyOfPropertyChange("previeusBindKeyName");
+            }
+        }
+
+
 
 
         public MultiClipBoardViewModel()
@@ -23,8 +95,31 @@ namespace Multi_Clipboard
             this.DisplayName = "Multi Clipboard";          // Window display name
             core = new ClipboardCore();
             FillComboboxes();                              // Setting up comboboxes            
-            Clipboard.CurrentItem += SetCurrentlySelectedItem;            
+            Clipboard.CurrentItem += SetCurrentlySelectedItem;
+            CatchBindKey += AssignBindKey;     
             
+        }
+
+
+
+        private void AssignBindKey(string keyName, int virtualKey)
+        {
+            if(_isAssignHotkeyAvailable)
+            {
+                KeyCatcher.SetKey(virtualKey, _selectedKey);
+                isCheckedNextClipboardHotkey = false;
+                isCheckedPrevieusClipboardHotkey = false;
+                switch(_selectedKey)
+                {
+                    case Enums.KeyType.Next:
+                        nextBindKeyName = keyName;
+                        break;
+
+                    case Enums.KeyType.Previeus:
+                        previeusBindKeyName = keyName;
+                        break;
+                }
+            }
         }
 
 
