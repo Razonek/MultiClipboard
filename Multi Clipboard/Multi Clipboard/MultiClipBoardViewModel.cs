@@ -1,27 +1,52 @@
 ﻿using System;
 using Caliburn.Micro;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections.ObjectModel;
+using System.Windows.Threading;
 
 namespace Multi_Clipboard
 {
 
+
     public delegate void SetClipboardSize(int value);
     public delegate void PressedKeyOnApplication(string keyName, int virtualKey);
+    public delegate void CloseShowSelectView();
+
 
     public class MultiClipBoardViewModel : Screen
     {
 
         ClipboardCore core;
+        WindowManager _maneger;
+        DispatcherTimer _showSelectTimer;
 
         public static SetClipboardSize SetClipboardSize;
         public static PressedKeyOnApplication CatchBindKey;
+        public static CloseShowSelectView CloseWindow;
 
         private bool _isAssignHotkeyAvailable { get; set; }
         private Enums.KeyType _selectedKey { get; set; }
+
+
+
+        /// <summary>
+        /// App constructor
+        /// </summary>
+        public MultiClipBoardViewModel()
+        {
+            core = new ClipboardCore();
+            _maneger = new WindowManager();
+            _showSelectTimer = new DispatcherTimer();
+            Clipboard.CurrentItem += SetCurrentlySelectedItem;
+            CatchBindKey += AssignBindKey;
+            CloseWindow += DoNothing;
+            _showSelectTimer.Tick += ShowSelectTimerTick;
+
+            this.DisplayName = "Multi Clipboard";          // Window display name
+            FillComboboxes();                              // Setting up comboboxes    
+        }
+
+
+        #region Binded variable
 
         private bool _isCheckedPrevieusClipboardHotkey;
         public bool isCheckedPrevieusClipboardHotkey
@@ -30,7 +55,7 @@ namespace Multi_Clipboard
             set
             {
                 _isCheckedPrevieusClipboardHotkey = value;
-                if(value && isCheckedNextClipboardHotkey)
+                if (value && isCheckedNextClipboardHotkey)
                 {
                     isCheckedNextClipboardHotkey = false;
                 }
@@ -44,6 +69,7 @@ namespace Multi_Clipboard
             }
         }
 
+
         private bool _isCheckedNextClipboardHotkey;
         public bool isCheckedNextClipboardHotkey
         {
@@ -51,7 +77,7 @@ namespace Multi_Clipboard
             set
             {
                 _isCheckedNextClipboardHotkey = value;
-                if(value && isCheckedPrevieusClipboardHotkey)
+                if (value && isCheckedPrevieusClipboardHotkey)
                 {
                     isCheckedPrevieusClipboardHotkey = false;
                 }
@@ -65,6 +91,7 @@ namespace Multi_Clipboard
             }
         }
 
+
         private string _nextBindKeyName;
         public string nextBindKeyName
         {
@@ -75,6 +102,7 @@ namespace Multi_Clipboard
                 NotifyOfPropertyChange("nextBindKeyName");
             }
         }
+
 
         private string _previeusBindKeyName;
         public string previeusBindKeyName
@@ -88,48 +116,6 @@ namespace Multi_Clipboard
         }
 
 
-
-
-        public MultiClipBoardViewModel()
-        {
-            this.DisplayName = "Multi Clipboard";          // Window display name
-            core = new ClipboardCore();
-            FillComboboxes();                              // Setting up comboboxes            
-            Clipboard.CurrentItem += SetCurrentlySelectedItem;
-            CatchBindKey += AssignBindKey;     
-            
-        }
-
-
-
-        private void AssignBindKey(string keyName, int virtualKey)
-        {
-            if(_isAssignHotkeyAvailable)
-            {
-                KeyCatcher.SetKey(virtualKey, _selectedKey);
-                isCheckedNextClipboardHotkey = false;
-                isCheckedPrevieusClipboardHotkey = false;
-                switch(_selectedKey)
-                {
-                    case Enums.KeyType.Next:
-                        nextBindKeyName = keyName;
-                        break;
-
-                    case Enums.KeyType.Previeus:
-                        previeusBindKeyName = keyName;
-                        break;
-                }
-            }
-        }
-
-
-        private void SetCurrentlySelectedItem(object value)
-        {
-            currentlySelectedItem = value.ToString();
-        }
-
-        
-
         private string _currentlySelectedItem;
         public string currentlySelectedItem
         {
@@ -139,25 +125,6 @@ namespace Multi_Clipboard
                 _currentlySelectedItem = value;
                 NotifyOfPropertyChange("currentlySelectedItem");
             }
-        }
-
-
-        /// <summary>
-        /// Button click reaction
-        /// Deleting currently seleced item from clipboard queue
-        /// </summary>
-        public void ClearCurrentSelection()
-        {
-            ClipboardCore.HotkeyPressReaction(Enums.Action.Delete);
-        }
-
-        /// <summary>
-        /// Button click reaction.
-        /// Clearing all items from clipboard queue
-        /// </summary>
-        public void ClearWholeClipboard()
-        {
-            ClipboardCore.HotkeyPressReaction(Enums.Action.ClearAll);
         }
 
 
@@ -172,50 +139,7 @@ namespace Multi_Clipboard
             }
         }
 
-        private string _nextHotkeyName;
-        public string nextHotkeyName
-        {
-            get { return _nextHotkeyName; }
-            private set
-            {
-                _nextHotkeyName = value;
-                NotifyOfPropertyChange("nextHotkeyName");
-            }
-        }
 
-
-        /// <summary>
-        /// Max clipboard items count - View
-        /// </summary>
-        #region
-        private List<int> _clipboardSize;
-        public List<int> clipboardSize
-        {
-            get { return _clipboardSize; }
-            private set
-            {
-                _clipboardSize = value;
-                NotifyOfPropertyChange("clipboardSize");
-            }
-        }
-
-        private int _selectedclipboardSize;
-        public int SelectedclipboardSize
-        {
-            get { return _selectedclipboardSize; }
-            set
-            {
-                _selectedclipboardSize = value;
-                SetClipboardSize(value);
-                NotifyOfPropertyChange("SelectedclipboardSize");
-            }
-        }
-        #endregion 
-
-        /// <summary>
-        /// Selector for "previeus" hotkey - View
-        /// </summary>
-        #region
         private List<Enums.Key> _previeusHotkeySelector;
         public List<Enums.Key> previeusHotkeySelector
         {
@@ -238,12 +162,44 @@ namespace Multi_Clipboard
                 NotifyOfPropertyChange("SelectedprevieusHotkeySelector");
             }
         }
-        #endregion
 
-        /// <summary>
-        /// Selector for "next" hotkey - View
-        /// </summary>
-        #region
+
+        private string _nextHotkeyName;
+        public string nextHotkeyName
+        {
+            get { return _nextHotkeyName; }
+            private set
+            {
+                _nextHotkeyName = value;
+                NotifyOfPropertyChange("nextHotkeyName");
+            }
+        }
+
+
+        private List<int> _clipboardSize;
+        public List<int> clipboardSize
+        {
+            get { return _clipboardSize; }
+            private set
+            {
+                _clipboardSize = value;
+                NotifyOfPropertyChange("clipboardSize");
+            }
+        }
+
+        private int _selectedclipboardSize;
+        public int SelectedclipboardSize
+        {
+            get { return _selectedclipboardSize; }
+            set
+            {
+                _selectedclipboardSize = value;
+                SetClipboardSize(value);
+                NotifyOfPropertyChange("SelectedclipboardSize");
+            }
+        }
+
+
         private Enums.Key _SelectednextHotkeySelector;
         public Enums.Key SelectednextHotkeySelector
         {
@@ -266,13 +222,94 @@ namespace Multi_Clipboard
                 NotifyOfPropertyChange("nextHotkeySelector");
             }
         }
+
+
         #endregion
+
+        
+        /// <summary>
+        /// Avoid exception when ShowSelect Window is not enable
+        /// </summary>
+        private void DoNothing()
+        {
+        }
+
+        /// <summary>
+        /// Closing ShowSelect Window after 3 seconds
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ShowSelectTimerTick(object sender, EventArgs e)
+        {
+            CloseWindow();
+            _showSelectTimer.IsEnabled = false;
+        }
 
 
         /// <summary>
-        /// Filling every combobox with data. Selecting starting values
+        /// Assigning keyboard key to app action
         /// </summary>
-        #region FillComboboxes
+        /// <param name="keyName"> Key name for display in view </param>
+        /// <param name="virtualKey"> Virtual key code for watching press on it </param>
+        private void AssignBindKey(string keyName, int virtualKey)
+        {
+            if(_isAssignHotkeyAvailable)
+            {
+                KeyCatcher.SetKey(virtualKey, _selectedKey);
+                isCheckedNextClipboardHotkey = false;
+                isCheckedPrevieusClipboardHotkey = false;
+                switch(_selectedKey)
+                {
+                    case Enums.KeyType.Next:
+                        nextBindKeyName = keyName;
+                        break;
+
+                    case Enums.KeyType.Previeus:
+                        previeusBindKeyName = keyName;
+                        break;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Showing up new window under cursor with selected item name. Closing after 3 seconds
+        /// </summary>
+        /// <param name="value"> Item name or value if it is text </param>
+        private void SetCurrentlySelectedItem(string value)
+        {
+            currentlySelectedItem = value.ToString();
+            CloseWindow();
+            _maneger.ShowWindow(new ShowSelectViewModel(value));
+            _showSelectTimer.Interval = new TimeSpan(0, 0, 3);
+            _showSelectTimer.IsEnabled = true;
+        }
+        
+
+        /// <summary>
+        /// Button click reaction
+        /// Deleting currently seleced item from clipboard queue
+        /// </summary>
+        public void ClearCurrentSelection()
+        {
+            ClipboardCore.HotkeyPressReaction(Enums.Action.Delete);
+        }
+
+
+        /// <summary>
+        /// Button click reaction.
+        /// Clearing all items from clipboard queue
+        /// </summary>
+        public void ClearWholeClipboard()
+        {
+            ClipboardCore.HotkeyPressReaction(Enums.Action.ClearAll);
+        }
+
+        
+
+        /// <summary>
+        /// Filling every combobox with data. Selecting starting values
+        /// </summary>        
         private void FillComboboxes()
         {            
             previeusHotkeySelector = new List<Enums.Key>(new Enums.Key[] { Enums.Key.Ctrl, Enums.Key.Shift, Enums.Key.Alt });
@@ -287,17 +324,11 @@ namespace Multi_Clipboard
             SelectedprevieusHotkeySelector = Enums.Key.Ctrl;
             SelectednextHotkeySelector = Enums.Key.Ctrl;
         }
-        #endregion
-        
-
-
-
+       
 
 
     }
-
-
-
+    
 
 
 }

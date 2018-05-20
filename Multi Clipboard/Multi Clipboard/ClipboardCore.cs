@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Threading;
 
 namespace Multi_Clipboard
@@ -29,7 +25,11 @@ namespace Multi_Clipboard
             _coreClock.Start();
         }
 
-
+        /// <summary>
+        /// Watching for user action
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CoreClockTick(object sender, EventArgs e)
         {
             _action = KeyCatcher.DetectAnyHotkeyPress();

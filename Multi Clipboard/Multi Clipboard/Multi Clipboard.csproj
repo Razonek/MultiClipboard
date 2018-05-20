@@ -74,6 +74,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ShowSelectView.xaml.cs">
+      <DependentUpon>ShowSelectView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ShowSelectViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bootstrapper.cs" />
@@ -115,6 +119,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="MultiClipBoardView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ShowSelectView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
