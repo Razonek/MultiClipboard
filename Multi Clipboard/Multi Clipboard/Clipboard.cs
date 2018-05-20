@@ -152,7 +152,7 @@ namespace Multi_Clipboard
                     }                    
                     break;
 
-                case Enums.Action.Previeus:
+                case Enums.Action.Previous:
                     if(clipboard.Count > 1)
                     {
                         currentlySelectedItemIndex--;
@@ -171,7 +171,7 @@ namespace Multi_Clipboard
                 case Enums.Action.Delete:
                     clipboard = new Queue<Item>(clipboard.Where(x => x != currentlySelectedItem));
                     if (clipboard.Count > 0)
-                        goto case Enums.Action.Previeus;
+                        goto case Enums.Action.Previous;
                     else
                         break;
 

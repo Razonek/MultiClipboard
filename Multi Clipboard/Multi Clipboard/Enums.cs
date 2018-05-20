@@ -27,7 +27,7 @@
         public enum Action
         {
             Next,
-            Previeus,
+            Previous,
             Copy,
             Cut,
             ClearAll,
@@ -39,8 +39,8 @@
         {
             NextSpecial,
             Next,
-            PrevieusSpecial,
-            Previeus,
+            PreviousSpecial,
+            Previous,
         }
 
 

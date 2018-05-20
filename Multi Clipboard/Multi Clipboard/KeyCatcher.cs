@@ -6,9 +6,9 @@ namespace Multi_Clipboard
     {
 
 
-        private static int _previeusSpecialKey { get; set; }
+        private static int _previousSpecialKey { get; set; }
         private static int _nextSpecialKey { get; set; }
-        public static int _previeusKey { get; set; }
+        public static int _previousKey { get; set; }
         public static int _nextKey { get; set; }
 
 
@@ -35,8 +35,8 @@ namespace Multi_Clipboard
                     return Enums.Action.Cut;
             }
 
-            if (GetAsyncKeyState(_previeusSpecialKey) != 0 && GetAsyncKeyState(_previeusKey) != 0)
-                return Enums.Action.Previeus;
+            if (GetAsyncKeyState(_previousSpecialKey) != 0 && GetAsyncKeyState(_previousKey) != 0)
+                return Enums.Action.Previous;
 
             if (GetAsyncKeyState(_nextSpecialKey) != 0 && GetAsyncKeyState(_nextKey) != 0)
                 return Enums.Action.Next;
@@ -63,12 +63,12 @@ namespace Multi_Clipboard
                     _nextSpecialKey = value;
                     break;
 
-                case Enums.KeyType.Previeus:
-                    _previeusKey = value;
+                case Enums.KeyType.Previous:
+                    _previousKey = value;
                     break;
 
-                case Enums.KeyType.PrevieusSpecial:
-                    _previeusSpecialKey = value;
+                case Enums.KeyType.PreviousSpecial:
+                    _previousSpecialKey = value;
                     break;
             }
         }

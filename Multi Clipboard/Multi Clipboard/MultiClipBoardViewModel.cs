@@ -48,13 +48,13 @@ namespace Multi_Clipboard
 
         #region Binded variable
 
-        private bool _isCheckedPrevieusClipboardHotkey;
-        public bool isCheckedPrevieusClipboardHotkey
+        private bool _isCheckedPreviousClipboardHotkey;
+        public bool isCheckedPreviousClipboardHotkey
         {
-            get { return _isCheckedPrevieusClipboardHotkey; }
+            get { return _isCheckedPreviousClipboardHotkey; }
             set
             {
-                _isCheckedPrevieusClipboardHotkey = value;
+                _isCheckedPreviousClipboardHotkey = value;
                 if (value && isCheckedNextClipboardHotkey)
                 {
                     isCheckedNextClipboardHotkey = false;
@@ -62,10 +62,10 @@ namespace Multi_Clipboard
                 if (value)
                 {
                     _isAssignHotkeyAvailable = true;
-                    _selectedKey = Enums.KeyType.Previeus;
+                    _selectedKey = Enums.KeyType.Previous;
                 }
                 else _isAssignHotkeyAvailable = false;
-                NotifyOfPropertyChange("isCheckedPrevieusClipboardHotkey");
+                NotifyOfPropertyChange("isCheckedPreviousClipboardHotkey");
             }
         }
 
@@ -77,9 +77,9 @@ namespace Multi_Clipboard
             set
             {
                 _isCheckedNextClipboardHotkey = value;
-                if (value && isCheckedPrevieusClipboardHotkey)
+                if (value && isCheckedPreviousClipboardHotkey)
                 {
-                    isCheckedPrevieusClipboardHotkey = false;
+                    isCheckedPreviousClipboardHotkey = false;
                 }
                 if (value)
                 {
@@ -104,14 +104,14 @@ namespace Multi_Clipboard
         }
 
 
-        private string _previeusBindKeyName;
-        public string previeusBindKeyName
+        private string _previousBindKeyName;
+        public string previousBindKeyName
         {
-            get { return _previeusBindKeyName; }
+            get { return _previousBindKeyName; }
             private set
             {
-                _previeusBindKeyName = value;
-                NotifyOfPropertyChange("previeusBindKeyName");
+                _previousBindKeyName = value;
+                NotifyOfPropertyChange("previousBindKeyName");
             }
         }
 
@@ -128,38 +128,38 @@ namespace Multi_Clipboard
         }
 
 
-        private string _previeusHotkeyName;
-        public string previeusHotkeyName
+        private string _previousHotkeyName;
+        public string previousHotkeyName
         {
-            get { return _previeusHotkeyName; }
+            get { return _previousHotkeyName; }
             private set
             {
-                _previeusHotkeyName = value;
-                NotifyOfPropertyChange("previeusHotkeyName");
+                _previousHotkeyName = value;
+                NotifyOfPropertyChange("previousHotkeyName");
             }
         }
 
 
-        private List<Enums.Key> _previeusHotkeySelector;
-        public List<Enums.Key> previeusHotkeySelector
+        private List<Enums.Key> _previousHotkeySelector;
+        public List<Enums.Key> previousHotkeySelector
         {
-            get { return _previeusHotkeySelector; }
+            get { return _previousHotkeySelector; }
             private set
             {
-                _previeusHotkeySelector = value;
-                NotifyOfPropertyChange("previeusHotkeySelector");
+                _previousHotkeySelector = value;
+                NotifyOfPropertyChange("previousHotkeySelector");
             }
         }
 
-        private Enums.Key _SelectedprevieusHotkeySelector;
-        public Enums.Key SelectedprevieusHotkeySelector
+        private Enums.Key _SelectedpreviousHotkeySelector;
+        public Enums.Key SelectedpreviousHotkeySelector
         {
-            get { return _SelectedprevieusHotkeySelector; }
+            get { return _SelectedpreviousHotkeySelector; }
             set
             {
-                _SelectedprevieusHotkeySelector = value;
-                KeyCatcher.SetKey((int)value, Enums.KeyType.PrevieusSpecial);
-                NotifyOfPropertyChange("SelectedprevieusHotkeySelector");
+                _SelectedpreviousHotkeySelector = value;
+                KeyCatcher.SetKey((int)value, Enums.KeyType.PreviousSpecial);
+                NotifyOfPropertyChange("SelectedpreviousHotkeySelector");
             }
         }
 
@@ -257,15 +257,15 @@ namespace Multi_Clipboard
             {
                 KeyCatcher.SetKey(virtualKey, _selectedKey);
                 isCheckedNextClipboardHotkey = false;
-                isCheckedPrevieusClipboardHotkey = false;
+                isCheckedPreviousClipboardHotkey = false;
                 switch(_selectedKey)
                 {
                     case Enums.KeyType.Next:
                         nextBindKeyName = keyName;
                         break;
 
-                    case Enums.KeyType.Previeus:
-                        previeusBindKeyName = keyName;
+                    case Enums.KeyType.Previous:
+                        previousBindKeyName = keyName;
                         break;
                 }
             }
@@ -312,7 +312,7 @@ namespace Multi_Clipboard
         /// </summary>        
         private void FillComboboxes()
         {            
-            previeusHotkeySelector = new List<Enums.Key>(new Enums.Key[] { Enums.Key.Ctrl, Enums.Key.Shift, Enums.Key.Alt });
+            previousHotkeySelector = new List<Enums.Key>(new Enums.Key[] { Enums.Key.Ctrl, Enums.Key.Shift, Enums.Key.Alt });
             nextHotkeySelector = new List<Enums.Key>(new Enums.Key[] { Enums.Key.Ctrl, Enums.Key.Shift, Enums.Key.Alt });
             clipboardSize = new List<int>();
 
@@ -321,7 +321,7 @@ namespace Multi_Clipboard
                 clipboardSize.Add(i);
             }
             SelectedclipboardSize = 5;
-            SelectedprevieusHotkeySelector = Enums.Key.Ctrl;
+            SelectedpreviousHotkeySelector = Enums.Key.Ctrl;
             SelectednextHotkeySelector = Enums.Key.Ctrl;
         }
        

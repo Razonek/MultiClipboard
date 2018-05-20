@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Multi_Clipboard"
         mc:Ignorable="d"
-        Height="320" Width="400">
+        Height="320" Width="400" Icon="icon.ico">
    
     
     
@@ -127,7 +127,7 @@
 
         <Label Content="Clipboard size: " Grid.Column="1" Grid.Row="1"/>
         <Label Content="Currently selected: " Grid.Column="1" Grid.Row="2"/>        
-        <Label Content="Previeus selector: " Grid.Column="1" Grid.Row="5"/>
+        <Label Content="Previous selector: " Grid.Column="1" Grid.Row="5"/>
         <Label Content="Next selector: " Grid.Column="1" Grid.Row="6"/>
         <Label x:Name="currentlySelectedItem" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="3"/>
 
@@ -139,9 +139,9 @@
 
 
         <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="5">
-            <ComboBox x:Name="previeusHotkeySelector" SelectedIndex="0" />
+            <ComboBox x:Name="previousHotkeySelector" SelectedIndex="0" />
             <Label Content=" + "/>
-            <ToggleButton x:Name="PrevieusClipboardHotkey" Content="{Binding Path=previeusBindKeyName, Mode=OneWay}" IsChecked="{Binding Path=isCheckedPrevieusClipboardHotkey, Mode=TwoWay}" />
+            <ToggleButton x:Name="PreviousClipboardHotkey" Content="{Binding Path=previousBindKeyName, Mode=OneWay}" IsChecked="{Binding Path=isCheckedPreviousClipboardHotkey, Mode=TwoWay}" />
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="6">
